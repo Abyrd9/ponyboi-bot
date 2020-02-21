@@ -46,7 +46,7 @@ const interactive = (req, res) => {
   switch (key) {
     case "add_user": {
       addUserToPonyGame(ponybot, channel_id, message_ts, users)
-        .then(res => {
+        .then(() => {
           return res.status(200).send("");
         })
         .catch(err => {
@@ -57,7 +57,7 @@ const interactive = (req, res) => {
       break;
     case "start_game": {
       startPonyGame(ponybot, channel_id, message_ts, users)
-        .then(res => {
+        .then(() => {
           return res.status(200).send("");
         })
         .catch(err => {

@@ -1,4 +1,11 @@
-exports.addUserToPonyGame = (ponybot, channel, messageId, users) => {
+const { ponybot, database } = require("../firebase");
+
+exports.addUserToGame = (channel, messageId, users) => {
+  const ref = database.ref("/currentGame");
+  const username = users[users.length - 1];
+  ref.push().set({
+    username: username,
+  });
   let elements = [];
   if (users) {
     users.forEach(user => {
@@ -27,8 +34,18 @@ exports.addUserToPonyGame = (ponybot, channel, messageId, users) => {
           "type": "section",
           "text": {
             "type": "mrkdwn",
-            "text": ":exclamation::exclamation:*PonyBoi Is Starting*:exclamation::exclamation:\n\nPlease click below to participate in today's barnyard games.",
+            "text": ":exclamation:*PonyBoi Is Starting*:exclamation:\n\nPlease click below to participate in today's barnyard games.",
           },
+          "accessory": {
+            "type": "button",
+            "text": {
+              "type": "plain_text",
+              "text": "Cancel",
+              "emoji": true
+            },
+                    "style": "danger",
+            "value": "delete_message"
+          }
         },
         {
           "type": "context",

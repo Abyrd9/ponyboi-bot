@@ -1,6 +1,7 @@
 const { shuffle } = require("../ponyHelpers/shuffle");
+const { ponybot } = require("../firebase");
 
-exports.startPonyGame = (ponybot, channel, messageId, users) => {
+exports.startGame = (channel, messageId, users) => {
   let shuffled = [];
   let fields = [];
   if (users.length > 0) shuffled = shuffle(users);
@@ -23,6 +24,16 @@ exports.startPonyGame = (ponybot, channel, messageId, users) => {
       text: {
         text: "*The Pony Order:*",
         type: "mrkdwn"
+      },
+      "accessory": {
+        "type": "button",
+        "text": {
+          "type": "plain_text",
+          "text": "Cancel",
+          "emoji": true
+        },
+                "style": "danger",
+        "value": "delete_message"
       }
     },
     {

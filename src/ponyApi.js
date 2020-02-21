@@ -1,15 +1,12 @@
-const functions = require('firebase-functions');
-const { WebClient } = require("@slack/web-api");
-const ponybot = new WebClient(functions.config().slack.token);
-
-const { initializePonyGame } = require("./ponyActions/initializePonyGame");
-const { addUserToPonyGame } = require("./ponyActions/addUserToPonyGame");
-const { startPonyGame } = require("./ponyActions/startPonyGame");
+const { createGame } = require("./ponyActions/createGame");
+const { addUserToGame } = require("./ponyActions/addUserToGame");
+const { startGame } = require("./ponyActions/startGame");
+const { removeMessage } = require("./ponyActions/removeMessage");
 
 const commands = (req, res) => {
   const { body = {} } = req;
   const { channel_id = '' } = body;
-  initializePonyGame(ponybot, channel_id)
+  createGame(channel_id)
     .then(() => {
       return res.status(200).send("");
     })
@@ -45,7 +42,7 @@ const interactive = (req, res) => {
   const { channel_id = '', message_ts = '' } = container;
   switch (key) {
     case "add_user": {
-      addUserToPonyGame(ponybot, channel_id, message_ts, users)
+      addUserToGame(channel_id, message_ts, users)
         .then(() => {
           return res.status(200).send("");
         })
@@ -56,7 +53,18 @@ const interactive = (req, res) => {
     }
       break;
     case "start_game": {
-      startPonyGame(ponybot, channel_id, message_ts, users)
+      startGame(channel_id, message_ts, users)
+        .then(() => {
+          return res.status(200).send("");
+        })
+        .catch(err => {
+          console.error(err);
+          return res.status(404).send("Something went wrong.");
+        });
+    }
+      break;
+    case "delete_message": {
+      removeMessage(channel_id, message_ts)
         .then(() => {
           return res.status(200).send("");
         })

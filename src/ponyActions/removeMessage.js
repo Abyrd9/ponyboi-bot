@@ -1,4 +1,4 @@
-const { ponybot } = require("../firebase");
+const { ponybot } = require("../utilities");
 
 exports.removeMessage = (channel, messageId) => {
   return new Promise((resolve, reject) => {

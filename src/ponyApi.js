@@ -42,7 +42,7 @@ const interactive = (req, res) => {
   const { channel_id = '', message_ts = '' } = container;
   switch (key) {
     case "add_user": {
-      addUserToGame(channel_id, message_ts, users)
+      addUserToGame(channel_id, message_ts, users, name)
         .then(() => {
           return res.status(200).send("");
         })

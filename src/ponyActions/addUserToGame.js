@@ -1,11 +1,25 @@
-const { ponybot, database } = require("../firebase");
+const { ponybot, database } = require("../utilities");
+const ref = database.ref("/currentGame/players");
 
-exports.addUserToGame = (channel, messageId, users) => {
-  const ref = database.ref("/currentGame");
-  const username = users[users.length - 1];
-  ref.push().set({
-    username: username,
+exports.addUserToGame = (channel, messageId, users, username) => {
+  let players = [];
+  ref.once("value", snapshot => {
+    if (snapshot.val()) {
+      players = Object.values(snapshot.val()).sort((a, b) => a.sort - b.sort).reduce((acc, player) => {
+        acc = [...acc, player.username];
+        return acc;
+      }, []);
+    }
   });
+
+  if (!players.includes(username)) {
+    players.push(username);
+    ref.push().set({
+      username: username,
+      sort: players.length,
+    });
+  }
+
   let elements = [];
   if (users) {
     users.forEach(user => {

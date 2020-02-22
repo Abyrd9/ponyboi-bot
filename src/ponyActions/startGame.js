@@ -1,5 +1,5 @@
 const { shuffle } = require("../ponyHelpers/shuffle");
-const { ponybot } = require("../firebase");
+const { ponybot } = require("../utilities");
 
 exports.startGame = (channel, messageId, users) => {
   let shuffled = [];

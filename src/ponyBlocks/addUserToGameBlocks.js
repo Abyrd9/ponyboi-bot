@@ -1,4 +1,7 @@
-exports.addUserToGameBlocks = (channel, messageId, elements) => {
+exports.addUserToGameBlocks = (channel, messageId, gameId, players) => {
+  const delete_message = "delete_message" + "/" + gameId;
+  const add_user = "add_user" + "/" + gameId;
+  const start_game = "start_game" + "/" + gameId;
   return {
     text: "",
     channel: channel,
@@ -20,12 +23,12 @@ exports.addUserToGameBlocks = (channel, messageId, elements) => {
             "emoji": true
           },
           "style": "danger",
-          "value": "delete_message"
+          "value": delete_message
         }
       },
       {
         "type": "context",
-        "elements": elements
+        "elements": players
       },
       {
         "type": "divider",
@@ -40,7 +43,7 @@ exports.addUserToGameBlocks = (channel, messageId, elements) => {
               "emoji": true,
               "text": "Put Me In Coach"
             },
-            "value": "add_user"
+            "value": add_user
           },
           {
             "type": "button",
@@ -50,7 +53,7 @@ exports.addUserToGameBlocks = (channel, messageId, elements) => {
               "text": "Game Time"
             },
             "style": "primary",
-            "value": "start_game"
+            "value": start_game
           },
         ]
       }

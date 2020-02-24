@@ -1,4 +1,6 @@
-exports.createGameBlocks = (channel) => {
+exports.createGameBlocks = (channel, username, gameId) => {
+  const delete_message = "delete_message" + "/" + gameId;
+  const add_user = "add_user" + "/" + gameId;
   return {
     channel: channel,
     text: "",
@@ -18,7 +20,7 @@ exports.createGameBlocks = (channel) => {
             "emoji": true
           },
           "style": "danger",
-          "value": "delete_message"
+          "value": delete_message
         }
       },
       {
@@ -34,7 +36,7 @@ exports.createGameBlocks = (channel) => {
               "emoji": true,
               "text": "Put Me In Coach"
             },
-            "value": "add_user"
+            "value": add_user
           }
         ]
       }

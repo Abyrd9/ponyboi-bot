@@ -1,3 +1,4 @@
+const get = require('lodash.get');
 const { createGame } = require("./ponyActions/createGame");
 const { addUserToGame } = require("./ponyActions/addUserToGame");
 const { removeUserFromGame } = require("./ponyActions/removeUserFromGame");
@@ -6,8 +7,10 @@ const { removeMessage } = require("./ponyActions/removeMessage");
 
 const commands = (req, res) => {
   const { body = {} } = req;
-  const { channel_id = '' } = body;
-  createGame(channel_id)
+  const channelId = get(body, 'channel_id', "");
+
+  console.log(body);
+  createGame(channelId, "")
     .then(() => {
       return res.status(200).send("");
     })
@@ -19,24 +22,27 @@ const commands = (req, res) => {
 
 const interactive = (req, res) => {
   const { body = {} } = req;
-  let payload = {};
-  if (body.payload) payload = JSON.parse(body.payload);
+  const payload = body.payload ? JSON.parse(body.payload) : {};
 
-  const { container = {}, user = {}, actions = [] } = payload;
-  const { channel_id = '', message_ts = '' } = container;
-  let username = user.username ? "@" + user.username : "";
+  let username = get(payload, 'user.username', "");
+  if (username) username = "@" + username;
 
-  let key = "";
-  let removeName = "";
-  if (actions.length > 0) key = actions[0].value || "";
-  if (key.includes('/')) {
-    key = key.split('/')[0];
-    removeName = key.split("/")[1];
+  const channelId = get(payload, 'container.channel_id', "");
+  const messageId = get(payload, 'container.message_ts', "");
+  const actions = get(payload, 'actions', []);
+
+  
+  let actionKey = "";
+  let actionArgs = [];
+  if (actions.length > 0) actionKey = actions[0].value || "";
+  if (actionKey.includes('/')) {
+    actionArgs = actionKey.split('/');
+    actionKey = actionArgs[0];
   }
-  console.log(key, removeName);
-  switch (key) {
+
+  switch (actionKey) {
     case "add_user": {
-      addUserToGame(channel_id, message_ts, username)
+      addUserToGame(channelId, messageId, username)
         .then(() => {
           return res.status(200).send("");
         })
@@ -47,7 +53,7 @@ const interactive = (req, res) => {
     }
       break;
     case "remove_player": {
-      removeUserFromGame(channel_id, message_ts, username)
+      removeUserFromGame(channelId, messageId, username)
         .then(() => {
           return res.status(200).send("");
         })
@@ -58,7 +64,7 @@ const interactive = (req, res) => {
     }
       break;
     case "start_game": {
-      startGame(channel_id, message_ts)
+      startGame(channelId, messageId)
         .then(() => {
           return res.status(200).send("");
         })
@@ -69,7 +75,8 @@ const interactive = (req, res) => {
     }
       break;
     case "delete_message": {
-      removeMessage(channel_id, message_ts)
+      const gameId = actionArgs[1] || '';
+      removeMessage(channelId, messageId, gameId)
         .then(() => {
           return res.status(200).send("");
         })

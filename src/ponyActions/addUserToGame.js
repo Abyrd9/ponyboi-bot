@@ -1,45 +1,38 @@
 const { addUserToGameBlocks } = require("../ponyBlocks/addUserToGameBlocks");
 const { ponybot, database } = require("../utilities");
-const ref = database.ref("/currentGame/players");
 
-exports.addUserToGame = (channel, messageId, username) => {
-  return new Promise((resolve) => {
-    ref.once("value", snapshot => {
+exports.addUserToGame = (channel, messageId, username, gameId) => {
+  return new Promise(resolve => {
+    const gameRef = database.ref(`/games/${gameId}`);
+    const newPlayerRef = database.ref(`/games/${gameId}/players`).push();
+    gameRef.once("value", snapshot => {
+      let gameCreator = "";
       let players = [];
+
       let snap = snapshot.val();
-      if (snap) {
-        snap = Object.values(snap).sort((a, b) => a.sort - b.sort);
-        players = snap.reduce((acc, player) => {
-          acc = [...acc, player.username];
-          return acc;
-        }, []);
-      }
+      if (snap.gameCreator) gameCreator = snap.gameCreator;
+      if (snap.players) players = Object.values(snap.players);
 
-      if (!players.includes(username)) {
-        players.push(username);
-        ref.push().set({
+      const isNewPlayer =
+        players.length === 0 ||
+        players.every(player => player.username !== username);
+
+      console.log(isNewPlayer, players, username);
+      if (isNewPlayer) {
+        const newPlayer = {
           username: username,
-          sort: players.length,
-        });
+          playerId: newPlayerRef.key,
+          sort: players.length + 1
+        };
+        players.push(newPlayer);
+        newPlayerRef.set(newPlayer);
       }
 
-      let elements = [];
-      if (players) {
-        players.forEach(user => {
-          elements.push({
-            "type": "plain_text",
-            "emoji": true,
-            "text": user
-          })
-        });
-        elements.push({
-          "type": "plain_text",
-          "emoji": true,
-          "text": players.length + " Ponies"
-        })
-      }
-
-      resolve(ponybot.chat.update(addUserToGameBlocks(channel, messageId, elements)))
+      resolve(
+        ponybot.chat.update(
+          addUserToGameBlocks(channel, messageId, gameId, gameCreator, players)
+        )
+      );
     });
-  })
-}
+  });
+};

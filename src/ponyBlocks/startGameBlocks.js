@@ -1,4 +1,5 @@
-exports.startGameBlocks = (channel, messageId, fields) => {
+exports.startGameBlocks = (channel, messageId, gameId, player_blocks) => {
+  const delete_message = "delete_message" + "/" + gameId;
   let blocks = [
     {
       type: "section",
@@ -6,21 +7,21 @@ exports.startGameBlocks = (channel, messageId, fields) => {
         text: "*The Pony Order:*",
         type: "mrkdwn"
       },
-      "accessory": {
-        "type": "button",
-        "text": {
-          "type": "plain_text",
-          "text": "Cancel",
-          "emoji": true
+      accessory: {
+        type: "button",
+        text: {
+          type: "plain_text",
+          text: "Cancel",
+          emoji: true
         },
-        "style": "danger",
-        "value": "delete_message"
+        style: "danger",
+        value: delete_message
       }
     },
     {
       type: "divider"
     },
-    ...fields,
+    ...player_blocks
   ];
 
   return {
@@ -30,5 +31,5 @@ exports.startGameBlocks = (channel, messageId, fields) => {
     as_user: true,
     link_names: true,
     blocks: JSON.stringify(blocks)
-  }
-}
+  };
+};

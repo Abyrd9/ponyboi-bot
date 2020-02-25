@@ -7,39 +7,50 @@ exports.createGameBlocks = (channel, username, gameId) => {
     link_names: true,
     blocks: [
       {
-        "type": "section",
-        "text": {
-          "type": "mrkdwn",
-          "text": ":exclamation:*PonyBoi Is Starting*:exclamation:\n\nPlease click the button below if you'd like to compete in today's barnyard games."
+        type: "section",
+        text: {
+          type: "mrkdwn",
+          text:
+            ":exclamation:*PonyBoi Is Starting*:exclamation:\n\n" +
+            username +
+            " has started a game of PonyBoi"
         },
-        "accessory": {
-          "type": "button",
-          "text": {
-            "type": "plain_text",
-            "text": "Cancel",
-            "emoji": true
+        accessory: {
+          type: "button",
+          text: {
+            type: "plain_text",
+            text: "Cancel",
+            emoji: true
           },
-          "style": "danger",
-          "value": delete_message
+          style: "danger",
+          value: delete_message
         }
       },
       {
-        "type": "divider"
+        type: "section",
+        text: {
+          type: "mrkdwn",
+          text:
+            "Please click the button below if you'd like to compete in today's barnyard games."
+        }
       },
       {
-        "type": "actions",
-        "elements": [
+        type: "divider"
+      },
+      {
+        type: "actions",
+        elements: [
           {
-            "type": "button",
-            "text": {
-              "type": "plain_text",
-              "emoji": true,
-              "text": "Put Me In Coach"
+            type: "button",
+            text: {
+              type: "plain_text",
+              emoji: true,
+              text: "Put Me In Coach"
             },
-            "value": add_user
+            value: add_user
           }
         ]
       }
     ]
-  }
-}
+  };
+};
